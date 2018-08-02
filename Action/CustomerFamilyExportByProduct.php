@@ -57,7 +57,7 @@ class CustomerFamilyExportByProduct
     {
         $customers = CustomerCustomerFamilyQuery::create()->filterByCustomerFamilyId($familyId);
 
-        $customersToExport[] = array('First Name' => 'First Name', 'Last Name' => 'Last Name', 'Email' => 'Email', 'Family' => 'Family', 'Product' => 'Product');
+        $customersToExport[] = array('First Name' => 'First Name', 'Last Name' => 'Last Name', 'Email' => 'Email', 'Family' => 'Family', 'Product' => 'Product reference');
 
 
         /** @var CustomerCustomerFamily $customer */
