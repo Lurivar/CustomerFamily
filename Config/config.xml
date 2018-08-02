@@ -88,11 +88,6 @@
             <argument type="service" id="customer.family.service"/>
             <tag name="kernel.event_subscriber"/>
 		</service>
-
-		<service id="customer.family.service.export" class="CustomerFamily\Action\ExportFamilies" parent="abstract.set.container">
-			<tag name="kernel.event_subscriber" />
-		</service>
-
 	</services>
 
 	<hooks>
@@ -149,18 +144,5 @@
 			<tag name="hook.event_listener" event="account-update.after-javascript-include" type="front" method="onAccountUpdateAfterJSInclude"/>
 		</hook>
 	</hooks>
-
-	<exports>
-		<export id="thelia.export.taxed_prices" class="CustomerFamily\Action\ExportFamilies" category_id="thelia.export.products">
-			<export_descriptive locale="fr_FR">
-				<title>Familles de clients</title>
-				<description>Exporter les familles de Clients</description>
-			</export_descriptive>
-			<export_descriptive locale="en_US">
-				<title>Customer families</title>
-				<description>Export customer families</description>
-			</export_descriptive>
-		</export>
-	</exports>
 
 </config>
