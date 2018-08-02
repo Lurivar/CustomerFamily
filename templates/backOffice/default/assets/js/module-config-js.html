@@ -5,6 +5,21 @@
 <script type="text/javascript">
     (function($, $module){
 
+        //export
+        var $modalExport = $module.find('.js-modal-export');
+
+        $module.on('click', '.js-action-export', function(event){
+            var id = $(this).data('id');
+
+            $modalExport.find('.js-field-productref').val($(this).data('productref'));
+
+            $modalExport.find('form').attr('action', '{url path="/admin/module/CustomerFamily/export"}/'+id);
+            $modalExport.modal('show');
+            event.preventDefault();
+        });
+        //end export
+
+
         //delete
         var $modalDelete = $module.find('.js-modal-delete');
 

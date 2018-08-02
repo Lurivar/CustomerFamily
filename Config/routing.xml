@@ -23,6 +23,11 @@
         <requirement key="id">\d+</requirement>
     </route>
 
+    <route id="customer.family.export" path="/admin/module/CustomerFamily/export/{id}" methods="post">
+        <default key="_controller">CustomerFamily\Controller\Admin\CustomerFamilyAdminController::exportAction</default>
+        <requirement key="id">\d+</requirement>
+    </route>
+
     <route id="customer.family.customer.update" path="/admin/module/CustomerFamily/customer/update" methods="post">
         <default key="_controller">CustomerFamily\Controller\Admin\CustomerFamilyAdminController::customerUpdateAction</default>
     </route>

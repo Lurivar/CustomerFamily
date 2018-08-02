@@ -21,37 +21,24 @@ use Symfony\Component\Validator\Constraints\Callback;
 use Thelia\Model\LangQuery;
 
 /**
- * Class CustomerFamilyCreateForm
+ * Class CustomerFamilyExportForm
  * @package CustomerFamily\Form
  */
-class CustomerFamilyCreateForm extends BaseForm
+class CustomerFamilyExportForm extends BaseForm
 {
     /**
      * @return string the name of you form. This name must be unique
      */
     public function getName()
     {
-        return 'customer_family_create_form';
-    }
-
-    /**
-     * @param $value
-     * @param ExecutionContextInterface $context
-     */
-    public function checkLocale($value, ExecutionContextInterface $context)
-    {
-        if (!LangQuery::create()->findOneByCode($value) === null) {
-            $context->addViolation(Translator::getInstance()->trans(
-                "Invalid locale"
-            ));
-        }
+        return 'customer_family_export_form';
     }
 
     protected function buildForm()
     {
         $this->formBuilder
             ->add(
-                'code',
+                'productref',
                 'text',
                 array(
                     'constraints' => array(
@@ -60,51 +47,15 @@ class CustomerFamilyCreateForm extends BaseForm
                     'required' => true,
                     'empty_data' => false,
                     'label' => Translator::getInstance()->trans(
-                        'Code',
+                        'Product Reference',
                         array(),
                         CustomerFamily::MESSAGE_DOMAIN
                     ),
                     'label_attr' => array(
-                        'for' => 'code'
+                        'for' => 'productref'
                     )
                 )
             )
-            ->add(
-                'title',
-                'text',
-                array(
-                    'constraints' => array(
-                        new NotBlank()
-                    ),
-                    'required' => true,
-                    'empty_data' => false,
-                    'label' => Translator::getInstance()->trans(
-                        'Title'
-                    ),
-                    'label_attr' => array(
-                        'for' => 'title'
-                    )
-                )
-            )
-            ->add(
-                'locale',
-                'text',
-                array(
-                    'constraints' => array(
-                        new NotBlank(),
-                        new Callback(array("methods" => array(
-                            array($this, "checkLocale")
-                        )))
-                    ),
-                    'required' => true,
-                    'empty_data' => false,
-                    'label' => Translator::getInstance()->trans(
-                        'Locale'
-                    ),
-                    'label_attr' => array(
-                        'for' => 'locale'
-                    )
-                )
-            );
+            ;
     }
 }

@@ -12,6 +12,8 @@
 
 namespace CustomerFamily\Controller\Admin;
 
+use CustomerFamily\Action\CustomerFamilyExportByProduct;
+use CustomerFamily\Action\ExportFamilies;
 use CustomerFamily\CustomerFamily;
 use CustomerFamily\Event\CustomerCustomerFamilyEvent;
 use CustomerFamily\Event\CustomerFamilyEvent;
@@ -19,6 +21,7 @@ use CustomerFamily\Event\CustomerFamilyEvents;
 use CustomerFamily\Form\CustomerCustomerFamilyForm;
 use CustomerFamily\Form\CustomerFamilyCreateForm;
 use CustomerFamily\Form\CustomerFamilyDeleteForm;
+use CustomerFamily\Form\CustomerFamilyExportForm;
 use CustomerFamily\Form\CustomerFamilyUpdateForm;
 use CustomerFamily\Model\CustomerFamilyQuery;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -33,6 +36,7 @@ use Thelia\Form\CustomerUpdateForm;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Model\Base\CustomerQuery;
 use Thelia\Model\Customer;
+use Thelia\Model\ProductQuery;
 use Thelia\Tools\URL;
 
 /**
@@ -68,6 +72,53 @@ class CustomerFamilyAdminController extends BaseAdminController
 
         $message = Translator::getInstance()->trans(
             "Customer family was created successfully",
+            array(),
+            CustomerFamily::MODULE_DOMAIN
+        );
+
+        return self::renderAdminConfig($form, $message, $error);
+    }
+
+    /**
+     * @param Request $request
+     * @param $id
+     * @return mixed|\Thelia\Core\HttpFoundation\Response
+     */
+    public function exportAction(Request $request, $id)
+    {
+        if (null !== $response = $this->checkAuth(array(AdminResources::MODULE), array('CustomerFamily'), AccessManager::VIEW)) {
+            return $response;
+        }
+
+        $error = "";
+        $form = new CustomerFamilyExportForm($request);
+
+        try {
+            $formValidate = $this->validateForm($form);
+
+            $customerFamily = CustomerFamilyQuery::create()->findPk($id);
+
+            if ($customerFamily === null) {
+                throw new \Exception("Customer Family not found by Id");
+            }
+
+            $productref = $formValidate->get("productref");
+            $productref = $productref->getNormData();
+            $product = ProductQuery::create()->filterByRef($productref)->findOne();
+
+            if ($product === null) {
+                throw new \Exception("Product not found");
+            }
+
+            $test = new CustomerFamilyExportByProduct();
+            $test->exportFamilyAction($id, $productref);
+
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+        }
+
+        $message = Translator::getInstance()->trans(
+            "Customer family was exported successfully",
             array(),
             CustomerFamily::MODULE_DOMAIN
         );

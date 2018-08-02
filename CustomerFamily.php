@@ -60,6 +60,11 @@ class CustomerFamily extends BaseModule
         //Professional
         self::getCustomerFamilyByCode(self::CUSTOMER_FAMILY_PROFESSIONAL, "Professionnel", "fr_FR");
         self::getCustomerFamilyByCode(self::CUSTOMER_FAMILY_PROFESSIONAL, "Professional", "en_US");
+
+        /** Check if the path given is a directory, creates it otherwise */
+        if (!is_dir(__DIR__ . '/../export-data/')) {
+            @mkdir(__DIR__ . '/../export-data/');
+        }
     }
 
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null)

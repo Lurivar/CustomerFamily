@@ -9,6 +9,7 @@
             <ul id="tabbed-menu" class="nav nav-tabs">
                 <li class="active"><a data-toggle="tab" href="#families">{intl l="Families" d='customerfamily.bo.default'}</a> </li>
                 <li><a data-toggle="tab" href="#prices_definition">{intl l="Prices definition" d='customerfamily.bo.default'}</a></li>
+                <li><a data-toggle="tab" href="#export_customers">{intl l="Export Customers" d='customerfamily.bo.default'}</a></li>
             </ul>
 
             <div class="tab-content">
@@ -360,6 +361,113 @@
                             </table>
                         </div>
                     </div>
+                </div>
+
+                <!-- Export Customers tab -->
+                <div id="export_customers" class="tab-pane form-container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {if $hide_flags != true}
+                            <ul class="nav nav-pills">
+                                {loop name="lang_list" type="lang"}
+                                <li {if $ID == $edit_language_id}class="active"{/if}>
+                                {if $current_tab}
+                                {$lang_url = {url path="/admin/module/CustomerFamily" edit_language_id=$ID current_tab=$current_tab}}
+                                {else}
+                                {$lang_url = {url path="/admin/module/CustomerFamily" edit_language_id=$ID}}
+                                {/if}
+                                <a class="language-change-button" data-language-id="{$ID}" href="{$lang_url nofilter}" title="{intl l='Edit information in %lng' lng={$TITLE}}">
+                                    <img src="{image file="assets/img/flags/$CODE.png"}" alt="{$TITLE}" />
+                                </a>
+                                </li>
+                                {/loop}
+                            </ul>
+                            {/if}
+                        </div>
+
+                        {form name="customer.family.delete.form"}
+                        {if $form_error}
+                        <div class="alert alert-danger">{$form_error_message}</div
+                                {/if}
+                                {/form}
+
+                        <div class="col-md-12">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        {intl l="ID"}
+                                    </th>
+                                    <th>
+                                        {intl l="Code"}
+                                    </th>
+                                    <th>
+                                        {intl l="Title"}
+                                    </th>
+                                    <th>
+                                        {intl l="Action"}
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {ifloop rel="customer_family"}
+
+
+                                <!-- Families list -->
+                                {loop type="customer_family" name="customer_family" lang=$edit_language_id  force_return="on"}
+                                <tr>
+                                    <td>
+                                        {$CUSTOMER_FAMILY_ID}
+                                    </td>
+                                    <td>
+                                        {$CODE}
+                                    </td>
+                                    <td>
+                                        {$TITLE_CUSTOMER_FAMILY}
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-info pull-left js-action-export" data-id="{$CUSTOMER_FAMILY_ID}" data-code="{$CODE}" data-title="{$TITLE_CUSTOMER_FAMILY}" style="margin-right: 5px;">{intl l="Export" d='customerfamily.bo.default'}</a>
+                                    </td>
+                                </tr>
+                                {/loop}
+                                {/ifloop}
+                                {elseloop rel="customer_family"}
+                                <tr>
+                                    <td colspan="4" class="text-center">
+                                        {intl l="No family" d='customerfamily.bo.default'}
+                                    </td>
+                                </tr>
+                                {/elseloop}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    {form name="customer.family.export.form"}
+                    <div class="modal js-modal-export" tabindex="-1" role="dialog" aria-labelledby="Export family" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form action="" method="POST">
+                                {form_hidden_fields form=$form}
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        {form_field form=$form field="productref"}
+                                        <div class="form-group{if $error} has-error{/if}">
+                                            <label>{$label}</label>
+                                            <input class="form-control js-field-productref" type="text" required placeholder="{$label}" name="{$name}" value="{$value}" />
+                                        </div>
+                                        {/form_field}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">{intl l="Cancel"}</button>
+                                        <button type="submit" type="button" class="btn btn-primary js-action-delete-confirm">{intl l="Update"}</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {/form}
+
                 </div>
             </div>
         </div>
