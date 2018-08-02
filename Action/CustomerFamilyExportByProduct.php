@@ -67,7 +67,7 @@ class CustomerFamilyExportByProduct
         }
 
 
-        $fp = fopen(__DIR__ . '/../../export-data/' . 'exportFamily.csv', 'w');
+        $fp = fopen(__DIR__ . '/../export-data/' . 'exportFamily.csv', 'w');
 
         foreach ($customersToExport as $fields) {
             fputcsv($fp, $fields);
@@ -75,7 +75,7 @@ class CustomerFamilyExportByProduct
 
         fclose($fp);
 
-        $file = __DIR__ . '/../../export-data/' . 'exportFamily.csv';
+        $file = __DIR__ . '/../export-data/' . 'exportFamily.csv';
 
         if (file_exists($file)) {
             header('Content-Description: File Transfer');

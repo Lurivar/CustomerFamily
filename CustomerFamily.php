@@ -62,8 +62,9 @@ class CustomerFamily extends BaseModule
         self::getCustomerFamilyByCode(self::CUSTOMER_FAMILY_PROFESSIONAL, "Professional", "en_US");
 
         /** Check if the path given is a directory, creates it otherwise */
-        if (!is_dir(__DIR__ . '/../export-data/')) {
-            @mkdir(__DIR__ . '/../export-data/');
+        $test = __DIR__;
+        if (!is_dir(__DIR__ . '/export-data/')) {
+            @mkdir(__DIR__ . '/export-data/');
         }
     }
 
