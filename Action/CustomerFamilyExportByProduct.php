@@ -25,7 +25,7 @@ class CustomerFamilyExportByProduct
     /**
      * @param $customerId
      * @param $productReference
-     * @return null
+     * @return int
      * @throws \Propel\Runtime\Exception\PropelException
      */
     protected function checkCustomerCollection($customerId, $productReference)
@@ -40,7 +40,7 @@ class CustomerFamilyExportByProduct
                 /** @var OrderProduct $product */
                 foreach ($order->getOrderProducts()->getData() as $product) {
                     if ($product->getProductRef() == $productReference) {
-                        return NULL;
+                        return 0;
                     }
                 }
             }
@@ -48,6 +48,11 @@ class CustomerFamilyExportByProduct
         return $customerId;
     }
 
+    /**
+     * @param $familyId
+     * @param $productReference
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
     public function exportFamilyAction($familyId, $productReference)
     {
         $customers = CustomerCustomerFamilyQuery::create()->filterByCustomerFamilyId($familyId);
@@ -57,10 +62,11 @@ class CustomerFamilyExportByProduct
 
         /** @var CustomerCustomerFamily $customer */
         foreach ($customers as $customer) {
-            if ($checkCustomer = self::checkCustomerCollection($customer->getCustomerId(), $productReference) !== NULL) {
-                $customerMail = CustomerQuery::create()->filterById($checkCustomer)->findOne()->getEmail();
-                $customerFirstName = CustomerQuery::create()->filterById($checkCustomer)->findOne()->getFirstname();
-                $customerLastName = CustomerQuery::create()->filterById($checkCustomer)->findOne()->getLastname();
+            if (($checkCustomer = self::checkCustomerCollection($customer->getCustomerId(), $productReference)) !== 0) {
+                $thiscustomer = CustomerQuery::create()->filterById($checkCustomer)->findOne();
+                $customerMail = $thiscustomer->getEmail();
+                $customerFirstName = $thiscustomer->getFirstname();
+                $customerLastName = $thiscustomer->getLastname();
                 $familyName = CustomerFamilyQuery::create()->filterById($familyId)->findOne()->getCode();
                 $customersToExport[] = array('First Name' => $customerFirstName, 'Last Name' => $customerLastName, 'Email' => $customerMail, 'Family' => $familyName, 'Product' => $productReference);
             }
