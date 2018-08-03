@@ -72,7 +72,7 @@ class CustomerCustomerFamilyForm extends BaseForm
                         'for' => 'customer_id'
                     )
                 ))
-            ->add('customer_family_id', 'integer', array(
+            ->add('customer_family_id', 'text', array(
                     'constraints' => array(
                         new Constraints\NotBlank()
                     ),

@@ -8,6 +8,7 @@ use CustomerFamily\Model\CustomerCustomerFamilyQuery;
 use CustomerFamily\Model\CustomerFamilyQuery;
 use CustomerFamily\Model\Map\CustomerCustomerFamilyTableMap;
 use CustomerFamily\Model\Map\CustomerFamilyTableMap;
+use PDO;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Thelia\Core\HttpFoundation\Response;
 use Thelia\Model\CustomerQuery;
 use Thelia\Model\Map\CustomerTableMap;
+use Thelia\Model\ModuleHook;
 use Thelia\Model\Order;
 use Thelia\Model\OrderProduct;
 use Thelia\Model\OrderQuery;
@@ -55,7 +57,9 @@ class CustomerFamilyExportByProduct
      */
     public function exportFamilyAction($familyId, $productReference)
     {
-        $customers = CustomerCustomerFamilyQuery::create()->filterByCustomerFamilyId($familyId);
+        $customers = CustomerCustomerFamilyQuery::create()->where("customer_family_id REGEXP ?", '^' . $familyId . ',|,' . $familyId . ',|,' . $familyId . '$|^' . $familyId . '$', PDO::PARAM_STR);
+//        filterByCustomerFamilyId($familyId, Criteria::);
+        //$customers = CustomerCustomerFamilyQuery::create()->filterByCustomerFamilyId($familyId);
 
         $customersToExport[] = array('First Name' => 'First Name', 'Last Name' => 'Last Name', 'Email' => 'Email', 'Family' => 'Family', 'Product' => 'Product reference');
 

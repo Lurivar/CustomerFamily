@@ -5,8 +5,6 @@ namespace CustomerFamily\Model\Base;
 use \Exception;
 use \PDO;
 use CustomerFamily\Model\CustomerCustomerFamilyQuery as ChildCustomerCustomerFamilyQuery;
-use CustomerFamily\Model\CustomerFamily as ChildCustomerFamily;
-use CustomerFamily\Model\CustomerFamilyQuery as ChildCustomerFamilyQuery;
 use CustomerFamily\Model\Map\CustomerCustomerFamilyTableMap;
 use CustomerFamily\Model\Thelia\Model\Customer as ChildCustomer;
 use CustomerFamily\Model\Thelia\Model\CustomerQuery;
@@ -63,7 +61,7 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
 
     /**
      * The value for the customer_family_id field.
-     * @var        int
+     * @var        string
      */
     protected $customer_family_id;
 
@@ -83,11 +81,6 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
      * @var        Customer
      */
     protected $aCustomer;
-
-    /**
-     * @var        CustomerFamily
-     */
-    protected $aCustomerFamily;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -369,7 +362,7 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
     /**
      * Get the [customer_family_id] column value.
      *
-     * @return   int
+     * @return   string
      */
     public function getCustomerFamilyId()
     {
@@ -427,22 +420,18 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
     /**
      * Set the value of [customer_family_id] column.
      *
-     * @param      int $v new value
+     * @param      string $v new value
      * @return   \CustomerFamily\Model\CustomerCustomerFamily The current object (for fluent API support)
      */
     public function setCustomerFamilyId($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
         if ($this->customer_family_id !== $v) {
             $this->customer_family_id = $v;
             $this->modifiedColumns[CustomerCustomerFamilyTableMap::CUSTOMER_FAMILY_ID] = true;
-        }
-
-        if ($this->aCustomerFamily !== null && $this->aCustomerFamily->getId() !== $v) {
-            $this->aCustomerFamily = null;
         }
 
 
@@ -532,7 +521,7 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
             $this->customer_id = (null !== $col) ? (int) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : CustomerCustomerFamilyTableMap::translateFieldName('CustomerFamilyId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->customer_family_id = (null !== $col) ? (int) $col : null;
+            $this->customer_family_id = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CustomerCustomerFamilyTableMap::translateFieldName('Siret', TableMap::TYPE_PHPNAME, $indexType)];
             $this->siret = (null !== $col) ? (string) $col : null;
@@ -571,9 +560,6 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
     {
         if ($this->aCustomer !== null && $this->customer_id !== $this->aCustomer->getId()) {
             $this->aCustomer = null;
-        }
-        if ($this->aCustomerFamily !== null && $this->customer_family_id !== $this->aCustomerFamily->getId()) {
-            $this->aCustomerFamily = null;
         }
     } // ensureConsistency
 
@@ -615,7 +601,6 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aCustomer = null;
-            $this->aCustomerFamily = null;
         } // if (deep)
     }
 
@@ -739,13 +724,6 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
                 $this->setCustomer($this->aCustomer);
             }
 
-            if ($this->aCustomerFamily !== null) {
-                if ($this->aCustomerFamily->isModified() || $this->aCustomerFamily->isNew()) {
-                    $affectedRows += $this->aCustomerFamily->save($con);
-                }
-                $this->setCustomerFamily($this->aCustomerFamily);
-            }
-
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -806,7 +784,7 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
                         $stmt->bindValue($identifier, $this->customer_id, PDO::PARAM_INT);
                         break;
                     case 'CUSTOMER_FAMILY_ID':
-                        $stmt->bindValue($identifier, $this->customer_family_id, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, $this->customer_family_id, PDO::PARAM_STR);
                         break;
                     case 'SIRET':
                         $stmt->bindValue($identifier, $this->siret, PDO::PARAM_STR);
@@ -923,9 +901,6 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
         if ($includeForeignObjects) {
             if (null !== $this->aCustomer) {
                 $result['Customer'] = $this->aCustomer->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aCustomerFamily) {
-                $result['CustomerFamily'] = $this->aCustomerFamily->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1156,57 +1131,6 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildCustomerFamily object.
-     *
-     * @param                  ChildCustomerFamily $v
-     * @return                 \CustomerFamily\Model\CustomerCustomerFamily The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setCustomerFamily(ChildCustomerFamily $v = null)
-    {
-        if ($v === null) {
-            $this->setCustomerFamilyId(NULL);
-        } else {
-            $this->setCustomerFamilyId($v->getId());
-        }
-
-        $this->aCustomerFamily = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildCustomerFamily object, it will not be re-added.
-        if ($v !== null) {
-            $v->addCustomerCustomerFamily($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildCustomerFamily object
-     *
-     * @param      ConnectionInterface $con Optional Connection object.
-     * @return                 ChildCustomerFamily The associated ChildCustomerFamily object.
-     * @throws PropelException
-     */
-    public function getCustomerFamily(ConnectionInterface $con = null)
-    {
-        if ($this->aCustomerFamily === null && ($this->customer_family_id !== null)) {
-            $this->aCustomerFamily = ChildCustomerFamilyQuery::create()->findPk($this->customer_family_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aCustomerFamily->addCustomerCustomerFamilies($this);
-             */
-        }
-
-        return $this->aCustomerFamily;
-    }
-
-    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -1237,7 +1161,6 @@ abstract class CustomerCustomerFamily implements ActiveRecordInterface
         } // if ($deep)
 
         $this->aCustomer = null;
-        $this->aCustomerFamily = null;
     }
 
     /**

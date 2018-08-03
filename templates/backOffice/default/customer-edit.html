@@ -21,13 +21,23 @@
                         <input type="hidden" name="{$name}" value="{$customer_id}" />
                     {/form_field}
 
+                    {loop name="customer_family" type="customer_family"}
+                    <table class="table table-striped table-left-aligned">
+                    <tr>
+                        <td>{$CODE}</td>
+                        <td>{$CUSTOMER_FAMILY_ID}</td>
+                    </tr>
+                    </table>
+                    {/loop}
+
                     {form_field form=$form field='customer_family_id'}
                     <div class="form-group {if $error}has-error{/if}">
                         <label for="{$label_attr.for}" class="control-label group-type-status">{$label} *</label>
                         <div class="control-input">
-                            <select name="{$name}" id="{$label_attr.for}" class="form-control">
+                            <select multiple name="{$name}[]" id="{$label_attr.for}" class="form-control">
                                 {loop name="customer_family" type="customer_family"}
-                                <option data-code="{$CODE}" value="{$CUSTOMER_FAMILY_ID}" {if {$_customer_family_id_} == $CUSTOMER_FAMILY_ID}selected{/if}>{$TITLE_CUSTOMER_FAMILY}</option>
+                                {$CUSTOMER_FAMILY_ID} {$CODE}
+                                <option data-code="{$CODE}" value="{$CUSTOMER_FAMILY_ID}" {if in_array($CUSTOMER_FAMILY_ID, explode(',',{$_customer_family_id_}))}selected{/if}>{$TITLE_CUSTOMER_FAMILY}</option>
                                 {/loop}
                             </select>
                         </div>

@@ -110,8 +110,8 @@ class CustomerFamilyAdminController extends BaseAdminController
                 throw new \Exception("Product not found");
             }
 
-            $test = new CustomerFamilyExportByProduct();
-            $test->exportFamilyAction($id, $productref);
+            $exportFamily = new CustomerFamilyExportByProduct();
+            $exportFamily->exportFamilyAction($id, $productref);
 
         } catch (\Exception $e) {
             $error = $e->getMessage();

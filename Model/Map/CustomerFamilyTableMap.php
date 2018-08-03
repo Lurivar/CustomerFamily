@@ -167,7 +167,6 @@ class CustomerFamilyTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('CustomerCustomerFamily', '\\CustomerFamily\\Model\\CustomerCustomerFamily', RelationMap::ONE_TO_MANY, array('id' => 'customer_family_id', ), 'CASCADE', null, 'CustomerCustomerFamilies');
         $this->addRelation('CustomerFamilyPrice', '\\CustomerFamily\\Model\\CustomerFamilyPrice', RelationMap::ONE_TO_MANY, array('id' => 'customer_family_id', ), 'CASCADE', 'RESTRICT', 'CustomerFamilyPrices');
         $this->addRelation('CustomerFamilyOrder', '\\CustomerFamily\\Model\\CustomerFamilyOrder', RelationMap::ONE_TO_MANY, array('id' => 'customer_family_id', ), null, 'CASCADE', 'CustomerFamilyOrders');
         $this->addRelation('CustomerFamilyI18n', '\\CustomerFamily\\Model\\CustomerFamilyI18n', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', null, 'CustomerFamilyI18ns');
@@ -193,7 +192,6 @@ class CustomerFamilyTableMap extends TableMap
     {
         // Invalidate objects in ".$this->getClassNameFromBuilder($joinedTableTableMapBuilder)." instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-                CustomerCustomerFamilyTableMap::clearInstancePool();
                 CustomerFamilyPriceTableMap::clearInstancePool();
                 CustomerFamilyI18nTableMap::clearInstancePool();
             }

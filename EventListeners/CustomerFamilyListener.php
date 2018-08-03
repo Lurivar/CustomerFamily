@@ -220,8 +220,10 @@ class CustomerFamilyListener implements EventSubscriberInterface
             ;
         }
 
+        $familyIds = implode(",", $event->getCustomerFamilyId());
+
         $customerCustomerFamily
-            ->setCustomerFamilyId($event->getCustomerFamilyId())
+            ->setCustomerFamilyId($familyIds)
             ->setSiret($event->getSiret())
             ->setVat($event->getVat())
             ->save()

@@ -24,7 +24,7 @@ class CustomerCustomerFamilyEvent extends ActionEvent
     /** @var int */
     protected $customerId;
 
-    /** @var int */
+    /** @var array */
     protected $customerFamilyId;
 
     /** @var string */

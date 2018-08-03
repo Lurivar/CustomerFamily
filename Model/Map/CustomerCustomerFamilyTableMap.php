@@ -142,7 +142,7 @@ class CustomerCustomerFamilyTableMap extends TableMap
         $this->setUseIdGenerator(false);
         // columns
         $this->addForeignPrimaryKey('CUSTOMER_ID', 'CustomerId', 'INTEGER' , 'customer', 'ID', true, null, null);
-        $this->addForeignKey('CUSTOMER_FAMILY_ID', 'CustomerFamilyId', 'INTEGER', 'customer_family', 'ID', true, null, null);
+        $this->addColumn('CUSTOMER_FAMILY_ID', 'CustomerFamilyId', 'VARCHAR', true, 255, null);
         $this->addColumn('SIRET', 'Siret', 'VARCHAR', false, 50, null);
         $this->addColumn('VAT', 'Vat', 'VARCHAR', false, 50, null);
     } // initialize()
@@ -153,7 +153,6 @@ class CustomerCustomerFamilyTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Customer', '\\CustomerFamily\\Model\\Thelia\\Model\\Customer', RelationMap::MANY_TO_ONE, array('customer_id' => 'id', ), 'CASCADE', null);
-        $this->addRelation('CustomerFamily', '\\CustomerFamily\\Model\\CustomerFamily', RelationMap::MANY_TO_ONE, array('customer_family_id' => 'id', ), 'CASCADE', null);
     } // buildRelations()
 
     /**

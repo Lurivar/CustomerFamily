@@ -29,7 +29,7 @@ DROP TABLE IF EXISTS `customer_customer_family`;
 CREATE TABLE `customer_customer_family`
 (
     `customer_id` INTEGER NOT NULL,
-    `customer_family_id` INTEGER NOT NULL,
+    `customer_family_id` VARCHAR(255) NOT NULL,
     `siret` VARCHAR(50),
     `vat` VARCHAR(50),
     PRIMARY KEY (`customer_id`),
@@ -37,10 +37,6 @@ CREATE TABLE `customer_customer_family`
     CONSTRAINT `customer_customer_family_FK_1`
         FOREIGN KEY (`customer_id`)
         REFERENCES `customer` (`id`)
-        ON DELETE CASCADE,
-    CONSTRAINT `customer_customer_family_FK_2`
-        FOREIGN KEY (`customer_family_id`)
-        REFERENCES `customer_family` (`id`)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

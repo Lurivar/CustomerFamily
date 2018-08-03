@@ -40,20 +40,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCustomerCustomerFamilyQuery rightJoinCustomer($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Customer relation
  * @method     ChildCustomerCustomerFamilyQuery innerJoinCustomer($relationAlias = null) Adds a INNER JOIN clause to the query using the Customer relation
  *
- * @method     ChildCustomerCustomerFamilyQuery leftJoinCustomerFamily($relationAlias = null) Adds a LEFT JOIN clause to the query using the CustomerFamily relation
- * @method     ChildCustomerCustomerFamilyQuery rightJoinCustomerFamily($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CustomerFamily relation
- * @method     ChildCustomerCustomerFamilyQuery innerJoinCustomerFamily($relationAlias = null) Adds a INNER JOIN clause to the query using the CustomerFamily relation
- *
  * @method     ChildCustomerCustomerFamily findOne(ConnectionInterface $con = null) Return the first ChildCustomerCustomerFamily matching the query
  * @method     ChildCustomerCustomerFamily findOneOrCreate(ConnectionInterface $con = null) Return the first ChildCustomerCustomerFamily matching the query, or a new ChildCustomerCustomerFamily object populated from the query conditions when no match is found
  *
  * @method     ChildCustomerCustomerFamily findOneByCustomerId(int $customer_id) Return the first ChildCustomerCustomerFamily filtered by the customer_id column
- * @method     ChildCustomerCustomerFamily findOneByCustomerFamilyId(int $customer_family_id) Return the first ChildCustomerCustomerFamily filtered by the customer_family_id column
+ * @method     ChildCustomerCustomerFamily findOneByCustomerFamilyId(string $customer_family_id) Return the first ChildCustomerCustomerFamily filtered by the customer_family_id column
  * @method     ChildCustomerCustomerFamily findOneBySiret(string $siret) Return the first ChildCustomerCustomerFamily filtered by the siret column
  * @method     ChildCustomerCustomerFamily findOneByVat(string $vat) Return the first ChildCustomerCustomerFamily filtered by the vat column
  *
  * @method     array findByCustomerId(int $customer_id) Return ChildCustomerCustomerFamily objects filtered by the customer_id column
- * @method     array findByCustomerFamilyId(int $customer_family_id) Return ChildCustomerCustomerFamily objects filtered by the customer_family_id column
+ * @method     array findByCustomerFamilyId(string $customer_family_id) Return ChildCustomerCustomerFamily objects filtered by the customer_family_id column
  * @method     array findBySiret(string $siret) Return ChildCustomerCustomerFamily objects filtered by the siret column
  * @method     array findByVat(string $vat) Return ChildCustomerCustomerFamily objects filtered by the vat column
  *
@@ -281,38 +277,24 @@ abstract class CustomerCustomerFamilyQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByCustomerFamilyId(1234); // WHERE customer_family_id = 1234
-     * $query->filterByCustomerFamilyId(array(12, 34)); // WHERE customer_family_id IN (12, 34)
-     * $query->filterByCustomerFamilyId(array('min' => 12)); // WHERE customer_family_id > 12
+     * $query->filterByCustomerFamilyId('fooValue');   // WHERE customer_family_id = 'fooValue'
+     * $query->filterByCustomerFamilyId('%fooValue%'); // WHERE customer_family_id LIKE '%fooValue%'
      * </code>
      *
-     * @see       filterByCustomerFamily()
-     *
-     * @param     mixed $customerFamilyId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $customerFamilyId The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildCustomerCustomerFamilyQuery The current query, for fluid interface
      */
     public function filterByCustomerFamilyId($customerFamilyId = null, $comparison = null)
     {
-        if (is_array($customerFamilyId)) {
-            $useMinMax = false;
-            if (isset($customerFamilyId['min'])) {
-                $this->addUsingAlias(CustomerCustomerFamilyTableMap::CUSTOMER_FAMILY_ID, $customerFamilyId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($customerFamilyId['max'])) {
-                $this->addUsingAlias(CustomerCustomerFamilyTableMap::CUSTOMER_FAMILY_ID, $customerFamilyId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
+        if (null === $comparison) {
+            if (is_array($customerFamilyId)) {
                 $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $customerFamilyId)) {
+                $customerFamilyId = str_replace('*', '%', $customerFamilyId);
+                $comparison = Criteria::LIKE;
             }
         }
 
@@ -450,81 +432,6 @@ abstract class CustomerCustomerFamilyQuery extends ModelCriteria
         return $this
             ->joinCustomer($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Customer', '\CustomerFamily\Model\Thelia\Model\CustomerQuery');
-    }
-
-    /**
-     * Filter the query by a related \CustomerFamily\Model\CustomerFamily object
-     *
-     * @param \CustomerFamily\Model\CustomerFamily|ObjectCollection $customerFamily The related object(s) to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildCustomerCustomerFamilyQuery The current query, for fluid interface
-     */
-    public function filterByCustomerFamily($customerFamily, $comparison = null)
-    {
-        if ($customerFamily instanceof \CustomerFamily\Model\CustomerFamily) {
-            return $this
-                ->addUsingAlias(CustomerCustomerFamilyTableMap::CUSTOMER_FAMILY_ID, $customerFamily->getId(), $comparison);
-        } elseif ($customerFamily instanceof ObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(CustomerCustomerFamilyTableMap::CUSTOMER_FAMILY_ID, $customerFamily->toKeyValue('PrimaryKey', 'Id'), $comparison);
-        } else {
-            throw new PropelException('filterByCustomerFamily() only accepts arguments of type \CustomerFamily\Model\CustomerFamily or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the CustomerFamily relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return ChildCustomerCustomerFamilyQuery The current query, for fluid interface
-     */
-    public function joinCustomerFamily($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('CustomerFamily');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'CustomerFamily');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the CustomerFamily relation CustomerFamily object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   \CustomerFamily\Model\CustomerFamilyQuery A secondary query class using the current class as primary query
-     */
-    public function useCustomerFamilyQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinCustomerFamily($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'CustomerFamily', '\CustomerFamily\Model\CustomerFamilyQuery');
     }
 
     /**
